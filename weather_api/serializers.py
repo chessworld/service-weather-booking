@@ -1,28 +1,5 @@
 from rest_framework import serializers
-
-from .models import Booking, Location, WeatherOption, User, Weather, Temperature, Wind
-
-# Define serializers
-class LocationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Location
-        fields = ['id', 'suburb', 'state', 'postcode', 'country']
-
-
-class WeatherOptionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WeatherOption
-        fields = '__all__'
-
-
-class BookingSerializer(serializers.ModelSerializer):
-    location_name = serializers.StringRelatedField(source='location.name')
-    weather_option = serializers.StringRelatedField(source='weather.weather_option')
-    temperature = serializers.StringRelatedField(source='temperature.temperature')
-    wind = serializers.StringRelatedField(source='wind.wind')
-    class Meta:
-        model = Booking
-        fields = ['id', 'user', 'location', 'location_name', 'date', 'weather_option', 'temperature', 'wind', 'status', 'result'] 
+from .models import User, Booking, Location, DayTime, WeatherOption, BookingOption, ActualWeather, Feedback# Define the serializers
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -31,29 +8,54 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'completed_tutorial']
 
 
-class TemperatureSerializer(serializers.ModelSerializer):
+class LocationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Temperature
-        fields = ['id', 'temperature']
+        model = Location
+        fields = ['suburb', 'state', 'postcode', 'country']
 
 
-class WindSerializer(serializers.ModelSerializer):
+class DayTimeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Wind
-        fields = ['id', 'wind']
+        model = DayTime
+        fields = ['date', 'time_period', 'start_time', 'end_time']
 
 
-class WeatherSerializer(serializers.ModelSerializer):
-    wind = WindSerializer()
-    temperature = TemperatureSerializer()
-    weather_option = WeatherOptionSerializer()
+class WeatherOptionSerializer(serializers.ModelSerializer):
+    location = LocationSerializer()
+    day_time = DayTimeSerializer()
 
     class Meta:
-        model = Weather
-        fields = ['id', 'wind', 'temperature', 'weather_option']
+        model = WeatherOption
+        fields = ['option_type', 'option_name', 'value_type', 'min_value', 'max_value', 'location', 'day_time']
 
 
-# class FeedbackSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Feedback
-#         fields = ['id', 'user', 'rating', 'comments']
+class BookingOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookingOption
+        fields = ['booking', 'weather_option']
+
+
+class BookingSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    location = serializers.PrimaryKeyRelatedField(queryset=Location.objects.all())
+    day_time = serializers.PrimaryKeyRelatedField(queryset=DayTime.objects.all())
+    booking_option = BookingOptionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Booking
+        fields = ['id', 'user', 'location', 'day_time', 'status', 'result', 'booking_option']
+
+
+class ActualWeatherSerializer(serializers.ModelSerializer):
+    location = LocationSerializer()
+    datetime = DayTimeSerializer()
+
+    class Meta:
+        model = ActualWeather
+        fields = ['location', 'datetime']
+
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feedback
+        fields = ['id', 'rating', 'comment']
