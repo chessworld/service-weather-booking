@@ -18,4 +18,4 @@ class Booking(models.Model):
     ]
     status          = models.CharField(max_length=100, choices=BOOKING_STATUS_CHOICES, default='Upcoming')
 
-    result          = models.BooleanField() # Did the booking match actual weather data ?
+    result          = models.BooleanField(default=False) # Did the booking match actual weather data ?

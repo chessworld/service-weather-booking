@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Booking, Location, WeatherOption, User, Weather, Temperature, Wind, Feedback
+from .models import Booking, Location, WeatherOption, User, Weather, Temperature, Wind
 
 # Define serializers
 class LocationSerializer(serializers.ModelSerializer):
@@ -17,10 +17,12 @@ class WeatherOptionSerializer(serializers.ModelSerializer):
 
 class BookingSerializer(serializers.ModelSerializer):
     location_name = serializers.StringRelatedField(source='location.name')
-    weather_option = serializers.StringRelatedField(source='weather_option.option')
+    weather_option = serializers.StringRelatedField(source='weather.weather_option')
+    temperature = serializers.StringRelatedField(source='temperature.temperature')
+    wind = serializers.StringRelatedField(source='wind.wind')
     class Meta:
         model = Booking
-        fields = ['id', 'guest_id', 'location', 'location_name', 'booking_date', 'weather_option', 'temperature', 'wind', 'booking_status', 'result_weather_id'] 
+        fields = ['id', 'user', 'location', 'location_name', 'date', 'weather_option', 'temperature', 'wind', 'status', 'result'] 
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -51,7 +53,7 @@ class WeatherSerializer(serializers.ModelSerializer):
         fields = ['id', 'wind', 'temperature', 'weather_option']
 
 
-class FeedbackSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Feedback
-        fields = ['id', 'user', 'rating', 'comments']
+# class FeedbackSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Feedback
+#         fields = ['id', 'user', 'rating', 'comments']

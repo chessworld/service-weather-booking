@@ -9,7 +9,7 @@
 
 * pip install
 ```sh
-. pip install Django psycopg2 django-rest-swagger drf-yasg
+. pip install Django psycopg2 drf-yasg
 ```
 
 * Run Python Server

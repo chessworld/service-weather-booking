@@ -3,9 +3,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-
-from .serializers import LocationSerializer, WeatherOptionSerializer, BookingSerializer, UserSerializer, TemperatureSerializer, WindSerializer, WeatherSerializer, FeedbackSerializer
-from .models import Booking, Location, WeatherOption, User, Weather, Temperature, Wind, Feedback
+from .serializers import LocationSerializer, WeatherOptionSerializer, BookingSerializer, UserSerializer, TemperatureSerializer, WindSerializer, WeatherSerializer
+from .models import Booking, Location, WeatherOption, User, Weather, Temperature, Wind
 
 
 
@@ -73,12 +72,11 @@ class UserView(views.APIView):
         responses={200: openapi.Response('Response', UserSerializer)}
     )
     def post(self, request):
-        # Generate a unique guest ID
-        # This is a placeholder implementation and should be replaced with actual logic
-        guest_id = 'unique-guest-id'
+        # Get name
+        data = request.data
 
         # Create a new user
-        user = User.objects.create(name=guest_id)
+        user = User.objects.create(name=data['name'])
 
         # Serialize the user
         serializer = UserSerializer(user)
@@ -89,9 +87,9 @@ class UserView(views.APIView):
         operation_description="Retrieve the details of a user.",
         responses={200: openapi.Response('Response', UserSerializer)}
     )
-    def get(self, request, guest_id):
+    def get(self, request, user_id):
         # Get the user
-        user = User.objects.get(name=guest_id)
+        user = User.objects.get(id=user_id)
 
         # Serialize the user
         serializer = UserSerializer(user)
@@ -119,19 +117,19 @@ class BookingOptionsView(views.APIView):
 
         # Get the available weather options
         # This is a placeholder implementation and should be replaced with actual logic
-        weather_options = WeatherOption.objects.all()
-        temperature_options = Temperature.objects.all()
-        wind_options = Wind.objects.all()
+        weather_options = [i[1] for i in WeatherOption.WEATHER_OPTION_CHOICES]
+        temperature_options = [i[1] for i in Temperature.TEMPERATURE_CHOICES]
+        wind_options = [i[1] for i in Wind.WIND_CHOICES]
 
-        # Serialize the options
-        weather_serializer = WeatherOptionSerializer(weather_options, many=True)
-        temperature_serializer = TemperatureSerializer(temperature_options, many=True)
-        wind_serializer = WindSerializer(wind_options, many=True)
+        # # Serialize the options
+        # weather_serializer = WeatherOptionSerializer(weather_options, many=True)
+        # temperature_serializer = TemperatureSerializer(temperature_options, many=True)
+        # wind_serializer = WindSerializer(wind_options, many=True)
 
         return Response({
-            'weather_options': weather_serializer.data,
-            'temperature_options': temperature_serializer.data,
-            'wind_options': wind_serializer.data
+            'weather_options': weather_options,
+            'temperature_options': temperature_options,
+            'wind_options': wind_options
         })
 
 
@@ -143,7 +141,7 @@ class BookingView(views.APIView):
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'guest_id': openapi.Schema(type=openapi.TYPE_STRING, description='Guest ID'),
+                'user_id': openapi.Schema(type=openapi.TYPE_STRING, description='User ID'),
                 'weather': openapi.Schema(type=openapi.TYPE_STRING, description='Weather option'),
                 'temperature': openapi.Schema(type=openapi.TYPE_STRING, description='Temperature option'),
                 'wind': openapi.Schema(type=openapi.TYPE_STRING, description='Wind option'),
@@ -160,7 +158,7 @@ class BookingView(views.APIView):
         data = request.data
 
         # Get the user
-        user = User.objects.get(name=data['guest_id'])
+        user = User.objects.get(id=data['user_id'])
 
         # Get the weather
         weather_option = WeatherOption.objects.get(weather_option=data['weather'])
@@ -170,6 +168,11 @@ class BookingView(views.APIView):
 
         # Get the location
         location = Location.objects.get(suburb=data['location'])
+        
+        print("DATE")
+        print(type(data["date"]))
+        # # Get the date
+        # date = models.DateField()
 
         # Create the booking
         booking = Booking.objects.create(user=user, weather=weather, location=location, date=data['date'], status='Upcoming')
