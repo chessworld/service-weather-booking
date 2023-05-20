@@ -10,7 +10,7 @@ class WeatherOption(models.Model):
         ('Temperature', 'Temperature'),
         ('Wind', 'Wind')
     ]
-    option_type     = models.CharField(max_length=25, choices=WEATHER_OPTION_TYPES)
+    option_type = models.CharField(max_length=25, choices=WEATHER_OPTION_TYPES)
 
 
     WEATHER_OPTION_CHOICES = [
@@ -28,6 +28,7 @@ class WeatherOption(models.Model):
         ('Windy', 'Windy'),
         ('Gusty', 'Gusty'),
     ]
+
     option_name     = models.CharField(max_length=25, choices=WEATHER_OPTION_CHOICES)
 
 
@@ -35,8 +36,8 @@ class WeatherOption(models.Model):
         ('Km/h', 'Km/h'),
         ('Celsius', 'Celsius'),
     ]
-    value_type      = models.CharField(max_length=25, choices=WEATHER_VALUE_TYPE)
 
+    value_type = models.CharField(max_length=25, choices=WEATHER_VALUE_TYPE, blank=True, null=True)
 
-    min_value       = models.IntegerField()
-    max_value       = models.IntegerField()
+    min_value = models.IntegerField(blank=True, null=True)
+    max_value = models.IntegerField(blank=True, null=True)

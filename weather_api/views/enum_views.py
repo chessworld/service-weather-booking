@@ -1,6 +1,5 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from drf_yasg import openapi
 
 from ..models import WeatherOption
 
@@ -9,16 +8,16 @@ class Enum_Views(APIView):
         response = {
             'weather_option_types': {},
             'weather_option_choices': {},
-            'weather_value_types': {},
+            'weather_value_type': {},
         }
 
         for item in WeatherOption.WEATHER_OPTION_TYPES:
             response['weather_option_types'][item[0]] = item[1]
 
-        for item in WeatherOption.WEATHER_OPTION_TYPES:
+        for item in WeatherOption.WEATHER_OPTION_CHOICES:
             response['weather_option_choices'][item[0]] = item[1]
 
-        for item in WeatherOption.WEATHER_OPTION_TYPES:
-            response['weather_value_types'][item[0]] = item[1]
+        for item in WeatherOption.WEATHER_VALUE_TYPE:
+            response['weather_value_type'][item[0]] = item[1]
 
         return Response(response)
