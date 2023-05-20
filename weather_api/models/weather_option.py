@@ -40,5 +40,3 @@ class WeatherOption(models.Model):
 
     min_value       = models.IntegerField()
     max_value       = models.IntegerField()
-    location        = models.ForeignKey(Location, on_delete=models.CASCADE)
-    day_time        = models.ForeignKey(DayTime, on_delete=models.CASCADE)

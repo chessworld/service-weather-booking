@@ -20,18 +20,9 @@ class DayTimeSerializer(serializers.ModelSerializer):
         fields = ['date', 'time_period', 'start_time', 'end_time']
 
 class WeatherOptionSerializer(serializers.ModelSerializer):
-    location = LocationSerializer()
-    day_time = DayTimeSerializer()
-
     class Meta:
         model = WeatherOption
-        fields = ['option_type', 'option_name', 'value_type', 'min_value', 'max_value', 'location', 'day_time']
-
-
-class BookingOptionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BookingOption
-        fields = ['booking', 'weather_option']
+        fields = ['option_type', 'option_name', 'value_type', 'min_value', 'max_value']
 
 
 class BookingSerializer(serializers.ModelSerializer):
@@ -41,11 +32,33 @@ class BookingSerializer(serializers.ModelSerializer):
         model = Booking
         fields = ['id', 'user', 'location', 'day_time', 'status', 'result']
 
+
+class BookingOptionSerializer(serializers.ModelSerializer):
+    booking = BookingSerializer(many=True)
+
+    weather_option = WeatherOptionSerializer(many=True)
+
+    class Meta:
+        model = BookingOption
+        fields = ['booking', 'weather_option']
+
     def create(self, validated_data):
-        day_time_data = validated_data.pop('day_time')
-        day_time = DayTime.objects.create(**day_time_data)
-        booking = Booking.objects.create(day_time=day_time, **validated_data)
-        return booking
+        booking_data = validated_data.pop('booking')
+        weather_option_data = validated_data.pop('weather_option')
+
+        booking_option = BookingOption.objects.create()
+
+        for booking in booking_data:
+            day_time_data = booking.pop('day_time')
+            day_time_obj = DayTime.objects.create(**day_time_data)
+            booking_obj = Booking.objects.create(day_time=day_time_obj, **booking)
+            booking_option.booking.add(booking_obj)
+
+        for weather_option in weather_option_data:
+            weather_option_obj = WeatherOption.objects.create(**weather_option)
+            booking_option.weather_option.add(weather_option_obj)
+
+        return booking_option
 
 
 class ActualWeatherSerializer(serializers.ModelSerializer):

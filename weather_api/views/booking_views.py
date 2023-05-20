@@ -24,9 +24,9 @@ class BookingRetrieve(views.APIView):
 
 
 class BookingCreate(views.APIView):
-    @swagger_auto_schema(request_body=BookingSerializer)
+    @swagger_auto_schema(request_body=BookingOptionSerializer)
     def post(self, request, format=None):
-        serializer = BookingSerializer(data=request.data)
+        serializer = BookingOptionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
