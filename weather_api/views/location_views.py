@@ -10,7 +10,10 @@ from ..serializers import LocationSerializer
 class LocationSearch(views.APIView):
     @swagger_auto_schema(responses={200: LocationSerializer(many=True)})
     def get(self, request, format=None):
-        query = request.query_params.get('query', '')
-        locations = Location.objects.filter(suburb__icontains=query)
+        state = request.query_params.get('state', None)
+        if (state != None):
+            locations = Location.objects.filter(suburb__icontains=state)
+        else:
+            locations = Location.objects
         serializer = LocationSerializer(locations, many=True)
         return Response(serializer.data)

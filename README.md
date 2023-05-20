@@ -9,7 +9,7 @@
 
 * pip install
 ```sh
-. pip install Django psycopg2 drf-yasg
+. pip install Django psycopg2 drf-yasg django-cors-headers
 ```
 
 * Run Python Server

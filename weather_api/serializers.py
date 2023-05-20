@@ -19,7 +19,6 @@ class DayTimeSerializer(serializers.ModelSerializer):
         model = DayTime
         fields = ['date', 'time_period', 'start_time', 'end_time']
 
-
 class WeatherOptionSerializer(serializers.ModelSerializer):
     location = LocationSerializer()
     day_time = DayTimeSerializer()
@@ -36,14 +35,17 @@ class BookingOptionSerializer(serializers.ModelSerializer):
 
 
 class BookingSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    location = serializers.PrimaryKeyRelatedField(queryset=Location.objects.all())
-    day_time = serializers.PrimaryKeyRelatedField(queryset=DayTime.objects.all())
-    booking_option = BookingOptionSerializer(many=True, read_only=True)
+    day_time = DayTimeSerializer()
 
     class Meta:
         model = Booking
-        fields = ['id', 'user', 'location', 'day_time', 'status', 'result', 'booking_option']
+        fields = ['id', 'user', 'location', 'day_time', 'status', 'result']
+
+    def create(self, validated_data):
+        day_time_data = validated_data.pop('day_time')
+        day_time = DayTime.objects.create(**day_time_data)
+        booking = Booking.objects.create(day_time=day_time, **validated_data)
+        return booking
 
 
 class ActualWeatherSerializer(serializers.ModelSerializer):
