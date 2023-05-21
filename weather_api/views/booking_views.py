@@ -22,6 +22,12 @@ class BookingRetrieve(views.APIView):
         serializer = BookingSerializer(booking)
         return Response(serializer.data)
 
+class BookingList(views.APIView):
+    @swagger_auto_schema(responses={200: BookingOptionSerializer})
+    def get(self, request, format=None):
+        bookingoptions = BookingOption.objects.all()
+        serializer = BookingOptionSerializer(bookingoptions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class BookingCreate(views.APIView):
     @swagger_auto_schema(request_body=BookingOptionSerializer)
