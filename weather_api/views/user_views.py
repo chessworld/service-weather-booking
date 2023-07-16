@@ -17,6 +17,21 @@ class UserCreate(views.APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class UserUpdate(views.APIView):
+    @swagger_auto_schema(request_body=UserSerializer)
+    def post(self, request, user_id, format=None):
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class UserRetrieve(views.APIView):
     @swagger_auto_schema(responses={200: UserSerializer})
     def get(self, request, user_id, format=None):

@@ -3,7 +3,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from .views import BookingOptionList, BookingCreate, BookingUpdate, BookingRetrieve,  UserCreate, UserRetrieve, UserBookingList, LocationSearch, FeedbackCreate, Enum_Views, BookingList
+from .views import BookingOptionList, BookingCreate, BookingUpdate, BookingRetrieve,  UserCreate, UserUpdate, UserRetrieve, UserBookingList, LocationSearch, FeedbackCreate, Enum_Views, BookingList
 
 
 schema_view = get_schema_view(
@@ -20,6 +20,7 @@ schema_view = get_schema_view(
 # Define URL routes
 urlpatterns = [
     path('users/', UserCreate.as_view(), name='user_create'),
+    path('users/<uuid:user_id>/', UserUpdate.as_view(), name='user_update'),
     path('users/<uuid:user_id>/', UserRetrieve.as_view(), name='user_detail'),
     path('users/<uuid:user_id>/bookings/', UserBookingList.as_view(), name='user_booking_list'),
     path('bookings/', BookingCreate.as_view(), name='booking_create'),
