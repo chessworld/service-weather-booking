@@ -16,7 +16,7 @@ class BookingTests(TestCase):
     def setUp(self):
         self.user = User.objects.create()
         self.location = Location.objects.create(suburb='Test Suburb', state='TS', postcode='1234', country='Test Country')
-        self.day_time = DayTime.objects.create(date='2022-01-01', time_period='Morning', start_time='06:00:00', end_time='12:00:00')
+        self.day_time = DayTime.objects.create(date='2022-01-01', time_period='Morning')
 
     def test_create_booking(self):
         url = reverse('booking_create')
@@ -51,7 +51,7 @@ class UserBookingsTests(TestCase):
     def setUp(self):
         self.user = User.objects.create()
         self.location = Location.objects.create(suburb='Test Suburb', state='TS', postcode='1234', country='Test Country')
-        self.day_time = DayTime.objects.create(date='2022-01-01', time_period='Morning', start_time='06:00:00', end_time='12:00:00')
+        self.day_time = DayTime.objects.create(date='2022-01-01', time_period='Morning')
 
     def test_get_user_bookings(self):
         Booking.objects.create(user=self.user, location=self.location, day_time=self.day_time)

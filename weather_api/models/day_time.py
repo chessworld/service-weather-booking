@@ -12,5 +12,3 @@ class DayTime(models.Model):
     
     date           = models.DateField()
     time_period    = models.CharField(max_length=25, choices=TIME_PERIOD_CHOICES)
-    start_time     = models.TimeField()
-    end_time       = models.TimeField()
