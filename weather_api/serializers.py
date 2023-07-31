@@ -17,7 +17,7 @@ class LocationSerializer(serializers.ModelSerializer):
 class DayTimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = DayTime
-        fields = ['date', 'time_period', 'start_time', 'end_time']
+        fields = ['date', 'time_period']
 
 class WeatherOptionSerializer(serializers.ModelSerializer):
     class Meta:
