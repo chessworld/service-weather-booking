@@ -1,8 +1,5 @@
 from django.db import models
 
-from .location import Location
-from .day_time import DayTime
-
 
 class WeatherOption(models.Model):
     WEATHER_TYPES = [
@@ -11,7 +8,7 @@ class WeatherOption(models.Model):
         ('Windy', 'Windy'),
         ('Rainy', 'Rainy'),
     ]
-    weather = models.models.CharField(max_length=25, choices=WEATHER_TYPES)
+    weather = models.CharField(max_length=25, choices=WEATHER_TYPES)
 
     WIND_LEVELS = [
         ('No Wind', 'No Wind'),
@@ -25,4 +22,4 @@ class WeatherOption(models.Model):
         ('Warm', 'Warm'),
         ('Hot', 'Hot'),
     ]
-    temperature = models.models.CharField(max_length=25, choices=TEMERATURE_LEVELS)
+    temperature = models.CharField(max_length=25, choices=TEMERATURE_LEVELS)
