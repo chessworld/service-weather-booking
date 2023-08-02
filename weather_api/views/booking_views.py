@@ -2,17 +2,8 @@ from rest_framework import status, views
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-
-from ..models import User, Booking, BookingOption
-from ..serializers import UserSerializer, BookingSerializer, BookingOptionSerializer
-
-
-class BookingOptionList(views.APIView):
-    @swagger_auto_schema(responses={200: BookingOptionSerializer(many=True)})
-    def get(self, request, format=None):
-        booking_options = BookingOption.objects.all()
-        serializer = BookingOptionSerializer(booking_options, many=True)
-        return Response(serializer.data)
+from ..serializers import BookingSerializer
+from ..models import Booking
 
 
 class BookingRetrieve(views.APIView):
@@ -22,21 +13,23 @@ class BookingRetrieve(views.APIView):
         serializer = BookingSerializer(booking)
         return Response(serializer.data)
 
+
 class BookingList(views.APIView):
-    @swagger_auto_schema(responses={200: BookingOptionSerializer})
-    def get(self, request, format=None):
-        bookingoptions = BookingOption.objects.all()
-        serializer = BookingOptionSerializer(bookingoptions, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    @swagger_auto_schema(responses={200: BookingSerializer(many=True)})
+    def get(self, request, user_id, format=None):
+        bookings = Booking.objects.filter(user__id=user_id)
+        serializer = BookingSerializer(bookings, many=True)
+        return Response(serializer.data)
+
 
 class BookingCreate(views.APIView):
-    @swagger_auto_schema(request_body=BookingOptionSerializer)
+    @swagger_auto_schema(request_body=BookingSerializer)
     def post(self, request, format=None):
-        serializer = BookingOptionSerializer(data=request.data)
+        serializer = BookingSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
 
 
 class BookingUpdate(views.APIView):

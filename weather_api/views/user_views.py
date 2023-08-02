@@ -36,11 +36,3 @@ class UserRetrieve(views.APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class UserBookingList(views.APIView):
-    @swagger_auto_schema(responses={200: BookingSerializer(many=True)})
-    def get(self, request, user_id, format=None):
-        bookings = Booking.objects.filter(user__id=user_id)
-        serializer = BookingSerializer(bookings, many=True)
-        return Response(serializer.data)
