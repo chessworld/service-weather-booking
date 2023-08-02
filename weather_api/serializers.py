@@ -35,7 +35,6 @@ class BookingSerializer(serializers.ModelSerializer):
 
 class BookingOptionSerializer(serializers.ModelSerializer):
     booking = BookingSerializer(many=True)
-
     weather_option = WeatherOptionSerializer(many=True)
 
     class Meta:

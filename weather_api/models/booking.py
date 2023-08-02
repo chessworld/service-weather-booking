@@ -1,9 +1,10 @@
 from django.db import models
 import uuid
 
-from .user import User
-from .location import Location
 from .day_time import DayTime
+from .location import Location
+from .user import User
+from .weather_option import WeatherOption
 
 
 class Booking(models.Model):
@@ -11,6 +12,7 @@ class Booking(models.Model):
     user        = models.ForeignKey(User, on_delete=models.CASCADE)
     location    = models.ForeignKey(Location, on_delete=models.CASCADE)
     day_time    = models.ForeignKey(DayTime, on_delete=models.CASCADE)
+    weather_option = models.ForeignKey(WeatherOption, on_delete=models.CASCADE)
 
     BOOKING_STATUS_CHOICES = [
         ('Upcoming', 'Upcoming'),
