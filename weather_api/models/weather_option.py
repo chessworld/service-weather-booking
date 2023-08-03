@@ -5,8 +5,8 @@ class WeatherOption(models.Model):
     WEATHER_TYPES = [
         ('Cloudy', 'Cloudy'),
         ('Sunny', 'Sunny'),
-        ('Windy', 'Windy'),
         ('Rainy', 'Rainy'),
+        ('Stormy', 'Stormy'),
     ]
     weather = models.CharField(max_length=25, choices=WEATHER_TYPES)
 
