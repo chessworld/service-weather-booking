@@ -9,7 +9,8 @@ from ..models import Booking
 class BookingGetPatchResource(views.APIView):
     @swagger_auto_schema(responses={200: BookingSerializer})
     def get(self, request, booking_id, format=None):
-        booking = Booking.objects.prefetch_related('bookingoption_set').get(id=booking_id)
+        # booking = Booking.objects.prefetch_related('bookingoption_set').get(id=booking_id)
+        booking = Booking.objects.get(id=booking_id)
         serializer = BookingSerializer(booking)
         return Response(serializer.data)
 
