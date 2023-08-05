@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import User, Booking, Location, WeatherOption, ActualWeather, Feedback
 
 
@@ -26,7 +27,7 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Booking
         fields = ['id', 'user', 'location', 'date', 'time_period', 'weather_option', 'status', 'result']
-    
+
     def create(self, validated_data):
         weather_option_data = validated_data.pop('weather_option')
         weather_option      = WeatherOption.objects.create(**weather_option_data)

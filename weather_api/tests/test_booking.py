@@ -20,7 +20,6 @@ class BookingCreateTest(TestCase):
 
     def test_create_booking(self):
         payload = {
-            'user': str(self.user.id),
             'location': self.location.id,
             'date': self.date,
             'time_period': self.time_period,
@@ -32,18 +31,19 @@ class BookingCreateTest(TestCase):
             'status': self.status,
             'result': self.result
         }
-        response = self.client.post(reverse('booking_create'), data=json.dumps(payload), content_type='application/json')
+        url = reverse('booking_get_post_resource', args=[self.user.id])
+        response = self.client.post(url, data=json.dumps(payload), content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_invalid_booking(self):
         payload = {
-            'user': str(self.user.id),
             'location': self.location.id,
             'date': self.date,
             'time_period': self.time_period,
             'weather_option': str(self.weather_option)
         }
-        response = self.client.post(reverse('booking_create'), data=json.dumps(payload), content_type='application/json')
+        url = reverse('booking_get_post_resource', args=[str(self.user.id)])
+        response = self.client.post(url, data=json.dumps(payload), content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_patch_booking(self):

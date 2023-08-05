@@ -1,15 +1,15 @@
+from django.shortcuts import get_object_or_404
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, views
 from rest_framework.response import Response
-from drf_yasg.utils import swagger_auto_schema
 
 from ..serializers import BookingSerializer
-from ..models import Booking
+from ..models import Booking, User
 
 
 class BookingGetPatchResource(views.APIView):
     @swagger_auto_schema(responses={200: BookingSerializer})
     def get(self, request, booking_id, format=None):
-        # booking = Booking.objects.prefetch_related('bookingoption_set').get(id=booking_id)
         booking = Booking.objects.get(id=booking_id)
         serializer = BookingSerializer(booking)
         return Response(serializer.data)
@@ -24,19 +24,21 @@ class BookingGetPatchResource(views.APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class BookingList(views.APIView):
+class BookingGetPostResource(views.APIView):
     @swagger_auto_schema(responses={200: BookingSerializer(many=True)})
     def get(self, request, user_id, format=None):
         bookings = Booking.objects.filter(user__id=user_id)
         serializer = BookingSerializer(bookings, many=True)
         return Response(serializer.data)
 
-
-class BookingCreate(views.APIView):
     @swagger_auto_schema(request_body=BookingSerializer)
-    def post(self, request, format=None):
-        serializer = BookingSerializer(data=request.data)
+    def post(self, request, user_id, format=None):
+        user = get_object_or_404(User, id=user_id)
+        data = request.data.copy()
+        data['user'] = user.id
+
+        serializer = BookingSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
