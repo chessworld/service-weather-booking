@@ -1,0 +1,1 @@
+from .update_bookings import update_bookings
