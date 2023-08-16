@@ -1,26 +1,69 @@
 # Weather Booking App Service
 
+## Requirements
+
+- Python (tested with 3.10)
+- [Postgres](https://www.postgresql.org/download/)
+- [Redis](https://redis.io/docs/getting-started/installation/)
+
 ## How to Run Development
 
-* Activate Virtual Environment
+#### 1. Activate virtual environment
+
 ```sh
-. .venv/bin/activate 
+.venv/bin/activate 
 ```
 
-* pip install
+#### 2. Install requirements
+
 ```sh
-. pip install Django psycopg2 drf-yasg django-cors-headers
+pip install -r requirements.txt
 ```
 
-* Run Python Server
+#### 3. Make db migratitions
+
+```sh
+python manage.py makemigrations
+python manage.py migrate
+```
+
+#### 4. Run Python server
+
 ```sh
 python manage.py runserver
 ```
 
-* Make db migratitions
+#### 5. Run Celery
+
+###### 5.1 Start Redis
+
+Install Redis (for WSL)
+
 ```sh
-python manage.py makemigrations
-python manage.py migrate
+curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+
+sudo apt-get update
+sudo apt-get install redis
+```
+
+Start the Redis server
+
+```sh
+sudo service redis-server start
+```
+
+###### 5.2 Start Celery
+
+Open two new terminal instances and run:
+
+```sh
+python -m celery -A service_weather_booking worker -l info --pool=solo
+```
+
+```sh
+python -m celery -A service_weather_booking beat -l info
 ```
 
 ## Troubleshooting
