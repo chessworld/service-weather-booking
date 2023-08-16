@@ -1,1 +1,1 @@
-from .update_bookings import update_bookings
+from . import update_bookings
