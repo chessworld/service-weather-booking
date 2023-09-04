@@ -2,8 +2,9 @@ from django.urls import path
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from datetime import datetime
 
-from .views import UserCreate, UserDetail, LocationSearch, FeedbackCreate, Enum_Views, BookingGetPatchResource, BookingGetPostResource
+from .views import UserCreate, UserDetail, LocationSearch, FeedbackCreate, Enum_Views, BookingGetPatchResource, BookingGetPostResource, StatsGetResource
 
 
 schema_view = get_schema_view(
@@ -29,6 +30,8 @@ urlpatterns = [
     
     path('feedback/', FeedbackCreate.as_view(), name='feedback_create'),
     
+    path('stats/', StatsGetResource.as_view(), name='stats'),
+
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

@@ -20,7 +20,12 @@ class BookingCreateTest(TestCase):
 
     def test_create_booking(self):
         payload = {
-            'location': self.location.id,
+            'location': {
+                'suburb':'Test Suburb',
+                'state':'TS',
+                'postcode':'1234',
+                'country':'Test Country'
+            },
             'date': self.date,
             'time_period': self.time_period,
             'weather_option': {
@@ -37,7 +42,12 @@ class BookingCreateTest(TestCase):
 
     def test_create_invalid_booking(self):
         payload = {
-            'location': self.location.id,
+            'location': {
+                'suburb':'Test Suburb',
+                'state':'TS',
+                'postcode':'1234',
+                'country':'Test Country'
+            },
             'date': self.date,
             'time_period': self.time_period,
             'weather_option': str(self.weather_option)

@@ -23,6 +23,7 @@ class WeatherOptionSerializer(serializers.ModelSerializer):
 
 class BookingSerializer(serializers.ModelSerializer):
     weather_option = WeatherOptionSerializer()
+    location = LocationSerializer()
 
     class Meta:
         model  = Booking
@@ -32,7 +33,10 @@ class BookingSerializer(serializers.ModelSerializer):
         weather_option_data = validated_data.pop('weather_option')
         weather_option      = WeatherOption.objects.create(**weather_option_data)
 
-        return Booking.objects.create(weather_option=weather_option, **validated_data)
+        location_data = validated_data.pop('location')
+        location = Location.objects.get(**location_data)
+
+        return Booking.objects.create(location=location, weather_option=weather_option, **validated_data)
 
     def update(self, instance, validated_data):
         weather_option_data = validated_data.pop('weather_option', None)
