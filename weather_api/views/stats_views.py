@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from datetime import datetime, timedelta
 
 from ..models import Booking
-from ..serializers import BookingSerializer
+from ..serializers import BookingSerizalizerStats
 
 
 DAYS_SINCE_BOOKING = 30
@@ -18,7 +18,7 @@ class StatsGetResource(views.APIView):
             openapi.Parameter('country', in_=openapi.IN_QUERY, type='string', description='Country for filtering bookings'),
             openapi.Parameter('state', in_=openapi.IN_QUERY, type='string', description='State for filtering bookings'),
         ],
-        responses={200: BookingSerializer(many=True)}
+        responses={200: BookingSerizalizerStats(many=True)}
         )
 
     def get(self, request, format=None):
@@ -35,5 +35,5 @@ class StatsGetResource(views.APIView):
         else:
             bookings = Booking.objects.filter(date__gte=start_date, date__lte=end_date)
 
-        serializer = BookingSerializer(bookings, many=True)
+        serializer = BookingSerizalizerStats(bookings, many=True)
         return Response(serializer.data)

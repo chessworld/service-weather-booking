@@ -51,6 +51,13 @@ class BookingSerializer(serializers.ModelSerializer):
         return instance
 
 
+class BookingSerizalizerStats(BookingSerializer):
+
+    class Meta:
+        model = Booking
+        fields = ['location', 'date', 'time_period', 'weather_option', 'status', 'result']
+
+
 class ActualWeatherSerializer(serializers.ModelSerializer):
     location = LocationSerializer()
 
