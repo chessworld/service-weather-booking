@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import json
 import re
 from datetime import datetime
+import logging
 
 # from ..models import WeatherOption, Location
 
@@ -40,7 +41,7 @@ def search_location(search='', select=0):
     data = _fetch_json(f'https://api.weather.bom.gov.au/v1/locations?search={search}')
     locations = data['data']
     
-    print(locations)
+    logging.info(locations)
     return locations
 
 

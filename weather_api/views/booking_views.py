@@ -39,6 +39,9 @@ class BookingGetPostResource(views.APIView):
 
         serializer = BookingSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            try:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except:
+                pass
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
