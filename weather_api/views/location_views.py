@@ -5,18 +5,58 @@ from drf_yasg import openapi
 
 from ..models.location import Location
 from ..serializers import LocationSerializer
+from ..weather_providers import bom
 
+NUM_LOCATION_SUGGESTIONS = 5
 
 class LocationSearch(views.APIView):
-    @swagger_auto_schema(responses={200: LocationSerializer(many=True)})
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('query', openapi.IN_QUERY,
+                              type='string',
+                              description='Search query. Can be suburb name or postcode. Must be at least 4 characters'),
+            # openapi.Parameter('suburb', openapi.IN_QUERY,
+            #                   type='string',
+            #                   description='Filter results by suburb name. Case insensitive but must be an exact match.'),
+            # openapi.Parameter('state', openapi.IN_QUERY,
+            #                   type='string',
+            #                   description="Filter results by state code (e.g 'VIC'). Case insensitive but must be an exact match.",
+            #                   format='date')
+        ],
+        responses={200: LocationSerializer(many=True)}
+    )
     def get(self, request, format=None):
-        state = request.query_params.get('state', None)
-        if (state != None):
-            locations = Location.objects.filter(suburb__icontains=state)
-        else:
-            locations = Location.objects
-        serializer = LocationSerializer(locations, many=True)
-        return Response(serializer.data)
+        response_data = []
+
+        query = request.query_params.get('query', None)
+        if query and len(query) > 3:
+            existing_locations = Location.objects.filter(suburb__icontains=query)
+            if existing_locations.exists():
+                for location in existing_locations[:min(len(existing_locations), 4)]:
+                    response_data.append({
+                        'suburb': location.suburb,
+                        'postcode': location.postcode,
+                        'state': location.state,
+                        'country': location.country
+                    })
+                if len(response_data) >= NUM_LOCATION_SUGGESTIONS:
+                    return Response(response_data, status=status.HTTP_200_OK)
+
+            bom_response = bom.search_location(search=query)
+            for location in bom_response:
+                location = {
+                        'suburb': location['name'],
+                        'postcode': location['postcode'],
+                        'state': location['state'],
+                        'country': 'Australia'
+                    }
+                if location not in response_data:
+                    response_data.append(location)
+                if len(response_data) >= NUM_LOCATION_SUGGESTIONS:
+                    break
+            return Response(response_data, status=status.HTTP_200_OK)
+        return Response('Query should be at least 4 characters',status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(request_body=LocationSerializer)
     def post(self, request, format=None):
