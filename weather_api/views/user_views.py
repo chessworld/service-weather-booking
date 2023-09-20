@@ -7,7 +7,10 @@ from ..serializers import UserSerializer
 
 
 class UserCreate(views.APIView):
-    @swagger_auto_schema(request_body=UserSerializer)
+    @swagger_auto_schema(
+        security=[{'IsAdminUser':[]}],
+        request_body=UserSerializer
+        )
     def post(self, request, format=None):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():

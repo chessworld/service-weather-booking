@@ -10,19 +10,11 @@ from ..weather_providers import bom
 NUM_LOCATION_SUGGESTIONS = 5
 
 class LocationSearch(views.APIView):
-
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter('query', openapi.IN_QUERY,
                               type='string',
                               description='Search query. Can be suburb name or postcode. Must be at least 4 characters'),
-            # openapi.Parameter('suburb', openapi.IN_QUERY,
-            #                   type='string',
-            #                   description='Filter results by suburb name. Case insensitive but must be an exact match.'),
-            # openapi.Parameter('state', openapi.IN_QUERY,
-            #                   type='string',
-            #                   description="Filter results by state code (e.g 'VIC'). Case insensitive but must be an exact match.",
-            #                   format='date')
         ],
         responses={200: LocationSerializer(many=True)}
     )
