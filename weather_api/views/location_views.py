@@ -5,11 +5,16 @@ from drf_yasg import openapi
 
 from ..models.location import Location
 from ..serializers import LocationSerializer
-from ..weather_providers import bom
+from ..services import LocationProvider, Bom
 
 NUM_LOCATION_SUGGESTIONS = 5
 
 class LocationSearch(views.APIView):
+    
+    def __init__(self):
+        self.location_provider = Bom()
+
+
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter('query', openapi.IN_QUERY,
@@ -35,13 +40,13 @@ class LocationSearch(views.APIView):
                 if len(response_data) >= NUM_LOCATION_SUGGESTIONS:
                     return Response(response_data, status=status.HTTP_200_OK)
 
-            bom_response = bom.search_location(search=query)
-            for location in bom_response:
+            location_results = self.location_provider.search_location(search=query)
+            for location in location_results:
                 location = {
                         'suburb': location['name'],
                         'postcode': location['postcode'],
                         'state': location['state'],
-                        'country': 'Australia'
+                        'country': location['country']
                     }
                 if location not in response_data:
                     response_data.append(location)

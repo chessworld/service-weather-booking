@@ -27,15 +27,21 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-#### 4. Run Python server
+#### 4. Run Pytest
+
+```sh
+pytest --ds=service_weather_booking.settings --disable-warnings
+```
+
+#### 5. Run Python server
 
 ```sh
 python manage.py runserver
 ```
 
-#### 5. Run Celery
+#### 6. Run Celery
 
-###### 5.1 Start Redis
+###### 6.1 Start Redis
 
 Install Redis (for WSL)
 
@@ -54,7 +60,7 @@ Start the Redis server
 sudo service redis-server start
 ```
 
-###### 5.2 Start Celery
+###### 6.2 Start Celery
 
 Open two new terminal instances and run:
 

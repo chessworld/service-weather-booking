@@ -3,7 +3,7 @@ from django.db import transaction
 from datetime import datetime
 
 from ..models import Booking, Location, WeatherOption
-from ..weather_providers import bom
+from ..services.bom import Bom
 
 import logging
 logger = logging.getLogger(__name__)
@@ -44,6 +44,7 @@ def check_booking(booking: Booking):
     start_time = datetime(now.year, now.month, now.day, start_hour)
     end_time = datetime(now.year, now.month, now.day, end_hour)
 
+    bom = Bom()
     weather_options = bom.get_weather(start_time=start_time, end_time=end_time, postcode=postcode)
     
     portion = lambda key, val, items: len([item for item in items if item[key] == val])/len(items)

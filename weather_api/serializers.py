@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import User, Booking, Location, WeatherOption, ActualWeather, Feedback
-
+from .services.bom import Bom
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
