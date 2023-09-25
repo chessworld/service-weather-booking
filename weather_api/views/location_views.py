@@ -10,7 +10,7 @@ from ..services import LocationProvider, Bom
 NUM_LOCATION_SUGGESTIONS = 5
 
 class LocationSearch(views.APIView):
-    
+
     def __init__(self):
         self.location_provider = Bom()
 
@@ -43,7 +43,7 @@ class LocationSearch(views.APIView):
             location_results = self.location_provider.search_location(search=query)
             for location in location_results:
                 location = {
-                        'suburb': location['name'],
+                        'suburb': location['suburb'],
                         'postcode': location['postcode'],
                         'state': location['state'],
                         'country': location['country']

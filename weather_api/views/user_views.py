@@ -7,10 +7,7 @@ from ..serializers import UserSerializer
 
 
 class UserCreate(views.APIView):
-    @swagger_auto_schema(
-        security=[{'IsAdminUser':[]}],
-        request_body=UserSerializer
-        )
+    @swagger_auto_schema(responses={200: UserSerializer})
     def post(self, request, format=None):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -18,7 +15,11 @@ class UserCreate(views.APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    @swagger_auto_schema(responses={200: UserSerializer})
+    @swagger_auto_schema(
+        responses={200: UserSerializer},
+        security=[{'IsAdminUser':[]}],
+        request_body=UserSerializer
+    )
     def get(self, request, format=None):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)

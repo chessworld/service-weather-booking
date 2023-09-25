@@ -28,7 +28,7 @@ class Bom(WeatherProvider, LocationProvider):
         selecting the first element should be sufficient.
 
         If no match is found an empty list is returned and self.gohash is None.
-        
+
         data:[{geohash, id, name, postcode, state},]
 
         geohash     e.g. 'r1r143n'
@@ -44,7 +44,7 @@ class Bom(WeatherProvider, LocationProvider):
         search = search.replace('-', '+')
 
         data = self._fetch_json(f'https://api.weather.bom.gov.au/v1/locations?search={search}')
-        
+
         locations = data['data']
         response = []
         for location in locations:
@@ -52,26 +52,35 @@ class Bom(WeatherProvider, LocationProvider):
                     'suburb': location['name'],
                     'postcode': location['postcode'],
                     'state': location['state'],
-                    'country': 'Australia'
+                    'country': 'Australia',
+                    'geohash': location['geohash'],
+                    'id': location['id']
                 }
             response.append(new_location)
-        
+
         logging.info(response)
         return response
 
 
-    def create_location(self, **kwargs):
+    def get_location(self, **kwargs):
+        if Location.objects.filter(**kwargs).exists():
+            return super().get_location(**kwargs)
+
         location_data = self.search_location(search=kwargs.get('postcode'))
         for location in location_data:
-            if location['name'].lower() == kwargs.get('suburb').lower() and location['state'].lower() == kwargs.get('state').lower() and kwargs.get('country').lower() == 'Australia'.lower():
+            if \
+                location['suburb'].lower() == kwargs.get('suburb').lower() and \
+                location['state'].lower() == kwargs.get('state').lower() and \
+                kwargs.get('country').lower() == 'australia':
+
                 new_location = {
-                    "suburb": location['name'],
+                    "suburb": location['suburb'],
                     "state": location['state'],
                     "postcode": location['postcode'],
                     "country": "Australia"
                 }
                 logging.info(f'New location created {new_location}')
-                return super.create_location(**new_location)
+                return super().get_location(**new_location)
         raise Exception
 
 
@@ -81,14 +90,14 @@ class Bom(WeatherProvider, LocationProvider):
         result = self._fetch_json(url)
         station = result['data']['station']
         
-        url = f"http://www.bom.gov.au/places/{location['state'].lower()}/{location['name'].lower()}"
+        url = f"http://www.bom.gov.au/places/{location['state'].lower()}/{location['suburb'].lower()}"
         req = urllib.request.Request(url, data=None, headers={'User-Agent': PLACES_USER_AGENT})
         page_html = urllib.request.urlopen(req).read()
         soup = BeautifulSoup(page_html, 'html.parser')
         station_p = soup.find('p', 'station-id')    
         wmo_id = station_p.contents[0][4:] if len(station_p.contents) > 0 else None
         station['wmo_id'] = wmo_id
-        
+
         return station
 
 
@@ -135,11 +144,9 @@ class Bom(WeatherProvider, LocationProvider):
             logging.info(f"The link for {station_name} is: {link_address}")
         else:
             logging.info(f"No link found for {station_name}")
-        
 
         self.get_station_details(link_address)
 
-            
         # Use regular expression to extract the key and number
         match = re.search(r'products/(\w+)/\w+\.(\d+)', link_address)
         product_id = match.group(1)
@@ -159,12 +166,13 @@ class Bom(WeatherProvider, LocationProvider):
         postcode = str(postcode)
         location = self.search_location(postcode)[0]
         station = self.get_station(location)
+        print(station)
         state, stn_name, wmo_id = location['state'], station['name'], station['wmo_id']  # get weather station details
 
         all_observations = self.get_observations(state, stn_name, wmo_id)    # observations
         
         
-        def _convert_time(self, local_date_time_str) -> bool:        
+        def _convert_time(local_date_time_str) -> bool:
             # Extracting day and time
             day, time_str = local_date_time_str.split('/')
             time_str = time_str.replace('pm', ' PM').replace('am', ' AM')
@@ -180,9 +188,9 @@ class Bom(WeatherProvider, LocationProvider):
             date_time_obj = datetime.strptime(date_time_str, '%Y-%m-%d %I:%M %p')
 
             return date_time_obj
-        
-        
-        def _check_range(self, val, start=None, end=None):
+
+
+        def _check_range(val, start=None, end=None):
             """
             Returns: 0 if between the range (inclusive) else False.
 
@@ -199,19 +207,20 @@ class Bom(WeatherProvider, LocationProvider):
             1 if greater than upper bound
             0 if between upper and lower bounds (inclusive)
             """
-            
+
             if start is not None and val < start:
                 return -1
             if end is not None and val > end:
                 return 1
             return 0
-        
-        
+
         observations = [obvservation for obvservation in all_observations if not _check_range(_convert_time(obvservation['local_date_time']), start=start_time, end=end_time)]
-        
-        def _get_weather_option(self, observation):
+
+    
+        def _get_weather_option(observation):
+
             get_option = lambda val, start, end, options: options[_check_range(val, start=start, end=end)+1]
-            
+
             # Temperature option
             temperature = get_option(
                 observation['air_temp'],
@@ -219,7 +228,7 @@ class Bom(WeatherProvider, LocationProvider):
                 20,
                 ('Cool', 'Warm', 'Hot')
                 )
-            
+
             # Wind option
             wind = get_option(
                 observation['wind_spd_kmh'],
@@ -227,29 +236,29 @@ class Bom(WeatherProvider, LocationProvider):
                 30,
                 ('No Wind', 'Calm', 'Windy')
                 )
-            
+
             # Check clouds
             clouds_oktas = observation['cloud_oktas']
             clouds_oktas = 0 if not clouds_oktas or clouds_oktas == '-' else float(clouds_oktas)
             # Rain
             rain = observation['rain_trace']
             rain = 0.0 if not rain or rain == '-' else float(rain)
-            
+
             weather_type = 'Cloudy' if clouds_oktas > 3 else 'Rainy' if rain > 0 else 'Sunny'
-            
+
             if wind == 'Windy' and clouds_oktas > 5 and weather_type == 'Rainy':
                 weather_type = 'Stormy'
-            
+
             weather_option = {
                 'weather_type': weather_type,
                 'temperature': temperature,
                 'wind': wind
                 }
-            
+
             return weather_option
-        
+
         weather_options = [_get_weather_option(observation) for observation in observations]
-        
+
         return weather_options
 
 

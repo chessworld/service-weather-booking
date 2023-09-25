@@ -17,7 +17,3 @@ class BomLocation(models.Model):
     geohash         = models.CharField(max_length=6)
     lattitude       = models.FloatField()
     longitude       = models.FloatField()
-    
-    
-    
-    

@@ -1,25 +1,9 @@
 from django.db import models
 
+from ..enums import WEATHER_TYPES, WIND_LEVELS, TEMERATURE_LEVELS
+
 
 class WeatherOption(models.Model):
-    WEATHER_TYPES = [
-        ('Cloudy', 'Cloudy'),
-        ('Sunny', 'Sunny'),
-        ('Rainy', 'Rainy'),
-        ('Stormy', 'Stormy'),
-    ]
-    weather = models.CharField(max_length=25, choices=WEATHER_TYPES)
-
-    WIND_LEVELS = [
-        ('No Wind', 'No Wind'),
-        ('Calm', 'Calm'),
-        ('Windy', 'Windy'),
-    ]
-    wind = models.CharField(max_length=25, choices=WIND_LEVELS)
-
-    TEMERATURE_LEVELS = [
-        ('Cool', 'Cool'),
-        ('Warm', 'Warm'),
-        ('Hot', 'Hot'),
-    ]
+    weather     = models.CharField(max_length=25, choices=WEATHER_TYPES)
+    wind        = models.CharField(max_length=25, choices=WIND_LEVELS)
     temperature = models.CharField(max_length=25, choices=TEMERATURE_LEVELS)
