@@ -10,6 +10,7 @@ from ..enums import TIME_PERIOD_CHOICES, BOOKING_STATUS_CHOICES, BOOKING_RESULT_
 class Booking(models.Model):
     id              = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user            = models.ForeignKey(User, on_delete=models.CASCADE)
+    booking_name    = models.CharField(max_length=100, default='Weather Booking')
     location        = models.ForeignKey(Location, on_delete=models.CASCADE)
     weather_option  = models.ForeignKey(WeatherOption, on_delete=models.CASCADE)
     date            = models.DateField()

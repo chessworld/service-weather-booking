@@ -28,7 +28,7 @@ class BookingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = Booking
-        fields = ['id', 'user', 'location', 'date', 'time_period', 'weather_option', 'status', 'result']
+        fields = ['id', 'user', 'booking_name', 'location', 'date', 'time_period', 'weather_option', 'status', 'result']
 
     def create(self, validated_data):
         weather_option_data = validated_data.pop('weather_option')

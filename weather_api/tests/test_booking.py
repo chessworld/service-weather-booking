@@ -9,6 +9,7 @@ from ..models import User, Location, WeatherOption, Booking
 class BookingCreateTest(TestCase):
     def setUp(self):
         self.user           = User.objects.create()
+        self.booking_name   = 'Booking Test'
         self.location       = Location.objects.create(suburb='Test Suburb', state='TS', postcode='1234', country='Test Country')
         self.weather_option = WeatherOption.objects.create(weather='Cloudy', wind='No Wind', temperature='Cool')
         self.date           = '2023-12-30'
@@ -20,6 +21,7 @@ class BookingCreateTest(TestCase):
 
     def test_create_booking(self):
         payload = {
+            'booking_name': self.booking_name,
             'location': {
                 'suburb':'Test Suburb',
                 'state':'TS',
@@ -42,6 +44,7 @@ class BookingCreateTest(TestCase):
 
     def test_create_booking_new_location(self):
         payload = {
+            'booking_name': self.booking_name,
             'location': {
                 'suburb':'Melbourne',
                 'state':'VIC',
@@ -70,6 +73,7 @@ class BookingCreateTest(TestCase):
 
     def test_create_invalid_booking(self):
         payload = {
+            'booking_name': self.booking_name,
             'location': {
                 'suburb':'Test Suburb',
                 'state':'TS',
