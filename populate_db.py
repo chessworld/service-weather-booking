@@ -4,8 +4,8 @@ from django.core.wsgi import get_wsgi_application
 from django.conf import settings
 import logging
 
-
 os.environ["DJANGO_SETTINGS_MODULE"] = 'service_weather_booking.settings'
+
 
 def populate_db():
     django.setup()

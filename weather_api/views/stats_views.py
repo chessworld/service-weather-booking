@@ -10,6 +10,7 @@ from ..serializers import BookingSerizalizerStats
 
 DAYS_SINCE_BOOKING = 30
 
+
 class StatsGetResource(views.APIView):
     @swagger_auto_schema(
         manual_parameters=[
@@ -19,8 +20,7 @@ class StatsGetResource(views.APIView):
             openapi.Parameter('state', in_=openapi.IN_QUERY, type='string', description='State for filtering bookings'),
         ],
         responses={200: BookingSerizalizerStats(many=True)}
-        )
-
+    )
     def get(self, request, format=None):
         start_date = request.query_params.get('start_date', datetime.now() - timedelta(days=DAYS_SINCE_BOOKING))
         end_date = request.query_params.get('end_date', datetime.now())

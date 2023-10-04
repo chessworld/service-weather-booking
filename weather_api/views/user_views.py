@@ -14,11 +14,10 @@ class UserCreate(views.APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     @swagger_auto_schema(
         responses={200: UserSerializer},
-        security=[{'IsAdminUser':[]}],
-        request_body=UserSerializer
+        security=[{'IsAdminUser': []}]
     )
     def get(self, request, format=None):
         users = User.objects.all()
@@ -32,8 +31,7 @@ class UserDetail(views.APIView):
         user = User.objects.get(id=user_id)
         serializer = UserSerializer(user)
         return Response(serializer.data)
-    
-    
+
     @swagger_auto_schema(request_body=UserSerializer)
     def patch(self, request, user_id, format=None):
         try:

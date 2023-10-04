@@ -3,6 +3,7 @@ from rest_framework.response import Response
 
 from ..models import WeatherOption
 
+
 class Enum_Views(APIView):
     def get(self, request, *args, **kwargs):
         response = {

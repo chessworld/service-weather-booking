@@ -9,11 +9,11 @@ from ..services import LocationProvider, Bom
 
 NUM_LOCATION_SUGGESTIONS = 5
 
+
 class LocationSearch(views.APIView):
 
     def __init__(self):
         self.location_provider = Bom()
-
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -47,13 +47,13 @@ class LocationSearch(views.APIView):
                         'postcode': location['postcode'],
                         'state': location['state'],
                         'country': location['country']
-                    }
+                }
                 if location not in response_data:
                     response_data.append(location)
                 if len(response_data) >= NUM_LOCATION_SUGGESTIONS:
                     break
             return Response(response_data, status=status.HTTP_200_OK)
-        return Response('Query should be at least 4 characters',status=status.HTTP_400_BAD_REQUEST)
+        return Response('Query should be at least 4 characters', status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(request_body=LocationSerializer)
     def post(self, request, format=None):

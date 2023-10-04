@@ -23,10 +23,10 @@ class BookingCreateTest(TestCase):
         payload = {
             'booking_name': self.booking_name,
             'location': {
-                'suburb':'Test Suburb',
-                'state':'TS',
-                'postcode':'1234',
-                'country':'Test Country'
+                'suburb': 'Test Suburb',
+                'state': 'TS',
+                'postcode': '1234',
+                'country': 'Test Country'
             },
             'date': self.date,
             'time_period': self.time_period,
@@ -42,13 +42,12 @@ class BookingCreateTest(TestCase):
         response = self.client.post(url, data=json.dumps(payload), content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-
     def _create_booking(self, user=None):
         if not user:
             user = self.user
 
         payload = {
-            'user_id' : user.id,
+            'user_id': user.id,
             'booking_name': self.booking_name,
             'date': self.date,
             'time_period': self.time_period,
@@ -58,14 +57,12 @@ class BookingCreateTest(TestCase):
         booking = Booking.objects.create(location=self.location, weather_option=self.weather_option, **payload)
         return booking
 
-
     def test_get_booking(self):
         booking: Booking = self._create_booking()
         url = reverse('booking_get_patch_resource', args=[booking.id])
         response = self.client.get(url, content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(str(booking.id), response.data['id'])
-
 
     def test_get_user_bookings(self):
         user = User.objects.create()
@@ -76,15 +73,14 @@ class BookingCreateTest(TestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(str(booking.id), response.data[0]['id'])
 
-
     def test_create_booking_new_location(self):
         payload = {
             'booking_name': self.booking_name,
             'location': {
-                'suburb':'Melbourne',
-                'state':'VIC',
-                'postcode':'3000',
-                'country':'Australia'
+                'suburb': 'Melbourne',
+                'state': 'VIC',
+                'postcode': '3000',
+                'country': 'Australia'
             },
             'date': self.date,
             'time_period': self.time_period,
@@ -99,10 +95,10 @@ class BookingCreateTest(TestCase):
         url = reverse('booking_get_post_resource', args=[self.user.id])
         self.client.post(url, data=json.dumps(payload), content_type='application/json')
         location = Location.objects.filter(
-            suburb = payload['location']['suburb'],
-            state = payload['location']['state'],
-            postcode = payload['location']['postcode'],
-            country = "Australia"
+            suburb=payload['location']['suburb'],
+            state=payload['location']['state'],
+            postcode=payload['location']['postcode'],
+            country="Australia"
         )
         self.assertNotEqual(location, None)
 
@@ -110,10 +106,10 @@ class BookingCreateTest(TestCase):
         payload = {
             'booking_name': self.booking_name,
             'location': {
-                'suburb':'Test Suburb',
-                'state':'TS',
-                'postcode':'1234',
-                'country':'Test Country'
+                'suburb': 'Test Suburb',
+                'state': 'TS',
+                'postcode': '1234',
+                'country': 'Test Country'
             },
             'date': self.date,
             'time_period': self.time_period,

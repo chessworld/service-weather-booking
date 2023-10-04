@@ -27,7 +27,7 @@ class BookingGetPatchResource(views.APIView):
 class BookingGetPostResource(views.APIView):
     @swagger_auto_schema(responses={200: BookingSerializer(many=True)})
     def get(self, request, user_id, format=None):
-        bookings = Booking.objects.filter(user__id=user_id)
+        bookings = Booking.objects.filter(user_id=user_id)
         serializer = BookingSerializer(bookings, many=True)
         return Response(serializer.data)
 
