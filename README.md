@@ -33,6 +33,12 @@ python manage.py migrate
 pytest --ds=service_weather_booking.settings --disable-warnings
 ```
 
+##### 4.1 Generate Code Coverage Report (Optional)
+```sh
+coverage run manage.py test
+coverage html
+```
+
 #### 5. Run Python server
 
 ```sh

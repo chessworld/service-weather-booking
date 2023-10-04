@@ -22,7 +22,7 @@ urlpatterns = [
     path('users/', UserCreate.as_view(), name='user_create'),
     path('users/<uuid:user_id>/', UserDetail.as_view(), name='user_detail'),
 
-    path('bookings/booking/<uuid:booking_id>/', BookingGetPatchResource.as_view(), name='booking_get_patch_resouce'),
+    path('bookings/booking/<uuid:booking_id>/', BookingGetPatchResource.as_view(), name='booking_get_patch_resource'),
     path('bookings/user/<uuid:user_id>/', BookingGetPostResource.as_view(), name='booking_get_post_resource'),
     # path('bookings/options', BookingOptionList.as_view(), name='booking_option_list'),
     

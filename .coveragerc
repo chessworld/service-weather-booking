@@ -1,0 +1,6 @@
+[run]
+omit =
+    manage.py
+    populate_db.py
+    enum_views.py
+    weather_api\services\bom.py

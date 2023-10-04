@@ -42,6 +42,41 @@ class BookingCreateTest(TestCase):
         response = self.client.post(url, data=json.dumps(payload), content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+
+    def _create_booking(self, user=None):
+        if not user:
+            user = self.user
+
+        payload = {
+            'user_id' : user.id,
+            'booking_name': self.booking_name,
+            'date': self.date,
+            'time_period': self.time_period,
+            'status': self.status,
+            'result': self.result
+        }
+        booking = Booking.objects.create(location=self.location, weather_option=self.weather_option, **payload)
+        return booking
+
+
+    def test_get_booking(self):
+        booking: Booking = self._create_booking()
+        url = reverse('booking_get_patch_resource', args=[booking.id])
+        response = self.client.get(url, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(str(booking.id), response.data['id'])
+
+
+    def test_get_user_bookings(self):
+        user = User.objects.create()
+        booking: Booking = self._create_booking(user=user)
+        url = reverse('booking_get_post_resource', args=[user.id])
+        response = self.client.get(url, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(str(booking.id), response.data[0]['id'])
+
+
     def test_create_booking_new_location(self):
         payload = {
             'booking_name': self.booking_name,
@@ -106,7 +141,7 @@ class BookingCreateTest(TestCase):
                 'temperature': 'Hot'
             },
         }
-        url = reverse('booking_get_patch_resouce', args=[booking.id])
+        url = reverse('booking_get_patch_resource', args=[booking.id])
         response = self.client.patch(url, data=json.dumps(payload), content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -123,6 +158,6 @@ class BookingCreateTest(TestCase):
             'date': self.date_patch,
             'result': ''
         }
-        url = reverse('booking_get_patch_resouce', args=[booking.id])
+        url = reverse('booking_get_patch_resource', args=[booking.id])
         response = self.client.patch(url, data=json.dumps(payload), content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
