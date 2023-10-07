@@ -15,7 +15,9 @@ on:
 jobs:
   pytest:
     runs-on: ubuntu-latest
-    
+    env:
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+
     services:
       postgres:
         image: postgres
@@ -30,8 +32,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        env:
-          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
 
       - name: Cache dependency
         uses: actions/cache@v2
@@ -56,11 +56,11 @@ jobs:
         run: python manage.py migrate
 
       - name: Run Test
-        run: pytest --ds=service_weather_booking.settings --disable-warnings
+        run: python -m pytest --ds=service_weather_booking.settings --disable-warnings
 
   formatting-check:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
